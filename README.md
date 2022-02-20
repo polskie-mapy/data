@@ -1,1 +1,1 @@
-# Repozytorium zawierające dane wykorzystywane przez aplikację mapainternetow.pl
+Repozytorium zawierające dane wykorzystywane przez aplikację mapainternetow.pl
