@@ -1,3 +1,6 @@
 name: ronaldinhothc@gmail.com
-description:  W przypadku chęci zgłoszenia błędu / propozycji anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą maila
+description:  W przypadku chęci zgłoszenia błędu / propozycji anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą maila **ronaldinhothc@gmail.com**
 body:
+- type: markdown
+  attributes:
+    value: "Czysto informacyjne, do not submit please :)"
