@@ -11,8 +11,8 @@ body:
     id: point-url
     attributes:
       label: Link do punktu
-      description: Pełen url do punktu (przykład: https://mapainternetow.pl/#/maps/1/point/251)
-      placeholder: np.: https://mapainternetow.pl/#/maps/1/point/251
+      description: "Pełen url do punktu (przykład: https://mapainternetow.pl/#/maps/1/point/251)"
+      placeholder: "np.: https://mapainternetow.pl/#/maps/1/point/251"
     validations:
       required: true
   - type: input
