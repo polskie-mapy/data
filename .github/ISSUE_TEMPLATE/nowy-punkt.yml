@@ -1,0 +1,51 @@
+name: Nowy punkt
+description: Zaproponuj nowy punkt na mapie
+labels: ["nowy punkt"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        W przypadku chęci zgłoszenia błędu / propozycji anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą
+        -> maila: ronaldinhothc@gmail.com
+  - type: input
+    id: name
+    attributes:
+      label: Nazwa punktu
+      description: "Proponowana nazwa punktu / nazwa filmiku"
+    validations:
+      required: true
+  - type: input
+    id: coords
+    attributes:
+      label: Lokalizacja zdarzenia
+      description: Jeśli nie znasz lokalizacji, wpisz `brak danych`
+      value: brak danych
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: "Linki do zdarzenia / filmu"
+      description: Może być więcej niż jedno źródło
+    validations:
+     required: true
+  - type: input
+    id: icon
+    attributes:
+      label: Proponowana ikona
+      description: "Jeśli chcesz możesz zaproponować ikonę z tej listy -> https://fontawesome.com/search?m=free&s=solid%2Cregular%2Cbrands"
+    validations:
+     required: false
+  - type: input
+    id: icon
+    attributes:
+      label: Proponowany kolor
+      description: "Jeśli chcesz możesz zaproponować kolor punktu, najlepiej w formacie #rrggbb -> https://www.google.com/search?q=color+picker skopiuj wartość z pola `HEX`"
+    validations:
+     required: false
+  - type: textarea
+    id: reasons
+    attributes:
+      label: Dlaczego ten punkt powinien znaleźć się na mapie?
+    validations:
+     required: true
