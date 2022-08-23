@@ -1,0 +1,40 @@
+name: Niepoprawna opis/ikona/tytuł
+description: Zgłoś niepoprawny opis, ikonę lub tytuł punktu na mapie
+labels: ["niepoprawny opis"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        W przypadku chęci zgłoszenia błędu anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą
+        -> maila: ronaldinhothc@gmail.com
+  - type: input
+    id: point-url
+    attributes:
+      label: Link do punktu
+      description: "Pełen url do punktu (przykład: https://mapainternetow.pl/#/maps/1/point/251)"
+      placeholder: "np.: https://mapainternetow.pl/#/maps/1/point/251"
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Co jest problemem?
+      options:
+        - niepoprawny opis
+        - niepoprawna ikona
+        - niepoprawny tytuł
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-change
+    attributes:
+      label: Proponowana poprawka
+      description: Jakiś link który będzie umożliwiał nam zweryfikowanie nowej lokalizacji
+    validations:
+     required: true
+  - type: textarea
+    id: why-change
+    attributes:
+      label: Dlaczego powinna ta zmiana nastąpić?
+   validations:
+     required: true
