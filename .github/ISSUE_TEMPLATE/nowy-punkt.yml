@@ -37,7 +37,7 @@ body:
     validations:
      required: false
   - type: input
-    id: icon
+    id: color
     attributes:
       label: Proponowany kolor
       description: "Jeśli chcesz możesz zaproponować kolor punktu, najlepiej w formacie #rrggbb -> https://www.google.com/search?q=color+picker skopiuj wartość z pola `HEX`"
