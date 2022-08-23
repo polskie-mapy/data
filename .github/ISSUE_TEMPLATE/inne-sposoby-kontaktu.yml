@@ -4,3 +4,11 @@ body:
 - type: markdown
   attributes:
     value: "Czysto informacyjne, do not submit please :)"
+- type: checkboxes
+  id: cat-preferences
+  attributes:
+    label: "Czysto informacyjne, do not submit please :)"
+    description: "Czysto informacyjne, do not submit please :)"
+    options:
+      - label: Nie chcę tworzyć tego zgłoszenia - zostałem zmuszony
+        required: true
