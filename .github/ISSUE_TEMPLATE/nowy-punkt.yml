@@ -18,7 +18,7 @@ body:
     id: coords
     attributes:
       label: Lokalizacja zdarzenia
-      description: Jeśli nie znasz lokalizacji, wpisz `brak danych`
+      description: Jeśli nie znasz lokalizacji, wpisz **brak danych**
       value: brak danych
     validations:
       required: true
@@ -40,7 +40,7 @@ body:
     id: color
     attributes:
       label: Proponowany kolor
-      description: "Jeśli chcesz możesz zaproponować kolor punktu, najlepiej w formacie #rrggbb -> https://www.google.com/search?q=color+picker skopiuj wartość z pola `HEX`"
+      description: "Jeśli chcesz możesz zaproponować kolor punktu, najlepiej w formacie #rrggbb -> https://www.google.com/search?q=color+picker skopiuj wartość z pola **HEX**"
     validations:
      required: false
   - type: textarea
