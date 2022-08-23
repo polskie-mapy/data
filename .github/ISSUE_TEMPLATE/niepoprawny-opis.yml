@@ -36,5 +36,5 @@ body:
     id: why-change
     attributes:
       label: Dlaczego powinna ta zmiana nastąpić?
-   validations:
+    validations:
      required: true
