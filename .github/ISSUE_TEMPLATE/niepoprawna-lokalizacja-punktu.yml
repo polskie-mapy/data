@@ -1,0 +1,31 @@
+name: Niepoprawna lokalizacja punktu
+description: Zgłoś niepoprawną lokalizację punktu na mapie
+labels: ["niepoprawna lokalizacja"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        W przypadku chęci zgłoszenia błędu anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą
+        -> maila: ronaldinhothc@gmail.com
+  - type: input
+    id: point-url
+    attributes:
+      label: Link do punktu
+      description: Pełen url do punktu (przykład: https://mapainternetow.pl/#/maps/1/point/251)
+      placeholder: np.: https://mapainternetow.pl/#/maps/1/point/251
+    validations:
+      required: true
+  - type: input
+    id: coords
+    attributes:
+      label: Prawidłowa lokalizacja
+      description: Forma koodrynatów lub linka do Google Maps z pinezką
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Źródło potwierdzające prawidłową lokalizację
+      description: Jakiś link który będzie umożliwiał nam zweryfikowanie nowej lokalizacji
+    validations:
+     required: true
