@@ -1,0 +1,19 @@
+{
+  "name": "data",
+  "version": "1.0.0",
+  "description": "Repozytorium zawierające dane wykorzystywane przez aplikację mapainternetow.pl",
+  "main": "index.js",
+  "scripts": {
+    "build": "node ./.deploy/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polskie-mapy/data.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/polskie-mapy/data/issues"
+  },
+  "homepage": "https://github.com/polskie-mapy/data#readme"
+}
