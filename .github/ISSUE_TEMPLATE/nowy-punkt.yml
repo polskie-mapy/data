@@ -33,7 +33,7 @@ body:
     id: icon
     attributes:
       label: Proponowana ikona
-      description: "Jeśli chcesz możesz zaproponować ikonę z tej listy -> https://fontawesome.com/search?m=free&s=solid%2Cregular%2Cbrands"
+      description: "Jeśli chcesz możesz zaproponować ikonę z tej listy -> https://fontawesome.com/search?o=r&s=solid%2Cregular&f=classic"
     validations:
      required: false
   - type: input
