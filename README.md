@@ -1,6 +1,6 @@
 Repozytorium zawierające dane wykorzystywane przez aplikację mapainternetow.pl
 
-Dane udostępnione są na licencji zawartej w pliku [LICENSE](LICENSE)
+Dane udostępnione są na licencji zawartej w pliku [LICENSE.txt](LICENSE.txt)
 
 ---
 
