@@ -86,8 +86,6 @@ function coords2GmapsPin(coords) {
     return `https://www.google.com/maps/place/${placePin}/@${loc},${zoom}z`;
 }
 
-'rmSync' in fs && fs.rmSync('./dist', {recursive: true});
-
 const data = require(process.cwd() + '/data.json');
 
 fs.mkdirSync('./dist/maps', { recursive: true });
