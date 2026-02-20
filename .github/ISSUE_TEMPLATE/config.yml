@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: "Zgłoś punkt bez znanej lokalizacji"
+    url: "https://github.com/polskie-mapy/data/issues/417"
+    about: Zgłoś go z megawątku dotyczącym szukania klasyków
   - name: "Zgłoszenie bez rejestracji w serwisie GitHub"
     url: "https://github.com/polskie-mapy/data/issues/427"
     about: Zgłoszenie problemów/propozycji bez rejestracji
