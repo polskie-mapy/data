@@ -18,8 +18,16 @@ body:
     id: coords
     attributes:
       label: Lokalizacja zdarzenia
-      description: Jeśli nie znasz lokalizacji, wpisz **brak danych**
       value: brak danych
+    validations:
+      required: true
+  - type: dropdown
+    id: coordsType
+    attributes:
+      label: Dokładność lokalizacji
+      options:
+        - Dokładna lokalizacja
+        - Niedokładna/przybliżona lokalizacja
     validations:
       required: true
   - type: textarea
