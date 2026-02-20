@@ -1,4 +1,4 @@
-name: Niepoprawna opis/ikona/tytuł
+name: Niepoprawny opis/ikona/tytuł istniejącego punktu
 description: Zgłoś niepoprawny opis, ikonę lub tytuł punktu na mapie
 labels: ["niepoprawny opis"]
 body:
@@ -7,6 +7,10 @@ body:
       value: |
         W przypadku chęci zgłoszenia błędu anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą
         -> maila: ronaldinhothc@gmail.com
+  - type: markdown
+    attributes:
+      value: |
+        Zgłaszając zmiany zgadzasz się na [regulamin dostępny tutaj](https://github.com/polskie-mapy/data/issues/426) ;P
   - type: input
     id: point-url
     attributes:
