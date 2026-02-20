@@ -22,7 +22,6 @@ body:
     id: coords
     attributes:
       label: Lokalizacja zdarzenia
-      value: brak danych
     validations:
       required: true
   - type: dropdown
