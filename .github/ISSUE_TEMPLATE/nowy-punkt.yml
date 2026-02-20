@@ -1,5 +1,5 @@
-name: Nowy punkt
-description: Zaproponuj nowy punkt na mapie
+name: Nowy punkt, znam jego lokalizacje
+description: Zaproponuj nowy punkt na mapie znając jego lokalizacje
 labels: ["nowy punkt"]
 body:
   - type: markdown
@@ -7,6 +7,10 @@ body:
       value: |
         W przypadku chęci zgłoszenia błędu / propozycji anonimowo lub bez rejestracji na GitHubie, skontaktuj się za pomocą
         -> maila: ronaldinhothc@gmail.com
+  - type: markdown
+    attributes:
+      value: |
+        Zgłaszając punkt akceptujesz regulamin
   - type: input
     id: name
     attributes:
