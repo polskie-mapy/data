@@ -10,7 +10,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Zgłaszając punkt akceptujesz regulamin
+        Zgłaszając zmiany zgadzasz się na [regulamin dostępny tutaj](https://github.com/polskie-mapy/data/issues/426) ;P
   - type: input
     id: name
     attributes:
