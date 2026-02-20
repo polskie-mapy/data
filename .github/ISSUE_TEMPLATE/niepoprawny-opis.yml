@@ -1,5 +1,5 @@
-name: Niepoprawny opis/ikona/tytuł istniejącego punktu
-description: Zgłoś niepoprawny opis, ikonę lub tytuł punktu na mapie
+name: Niepoprawny opis/ikona/tytuł lub brak filmu istniejącego punktu
+description: Zgłoś niepoprawny opis, ikonę, tytuł lub brak filmu punktu na mapie
 labels: ["niepoprawny opis"]
 body:
   - type: markdown
@@ -27,6 +27,7 @@ body:
         - niepoprawny opis
         - niepoprawna ikona
         - niepoprawny tytuł
+        - brak filmu
     validations:
       required: true
   - type: textarea
