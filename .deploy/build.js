@@ -40,6 +40,34 @@ const generateColumnType = (link, i) => {
     return `link${i + 1}`;
 }
 
+const escapeXml = (value) => String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
+
+const toValidIsoZulu = (value) => {
+    if (typeof value !== 'string' || !Number.isFinite(Date.parse(value))) {
+        return null;
+    }
+
+    return new Date(value).toISOString();
+};
+
+const trimTrailingSlashes = (value) => value.replace(/\/+$/, '');
+
+const renderSitemap = (entries) => {
+    const urls = entries.map((entry) => {
+        const lastmod = entry.lastmod ? `<lastmod>${escapeXml(entry.lastmod)}</lastmod>` : '';
+
+        return `<url><loc>${escapeXml(entry.loc)}</loc>${lastmod}</url>`;
+    }).join('');
+
+    return `<?xml version="1.0" encoding="UTF-8"?>` +
+        `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+};
+
 const generateColumns = function (points) {
     const columns = points.reduce((acc, cur) => {
         const columns =
@@ -87,6 +115,8 @@ function coords2GmapsPin(coords) {
 }
 
 const data = require(process.cwd() + '/data.json');
+const sitemapBaseUrl = 'https://mapainternetow.pl';
+const sitemapPointUrlTemplate = `${sitemapBaseUrl}/maps/{mapId}/point/{pointId}`;
 
 fs.mkdirSync('./dist/maps', { recursive: true });
 
@@ -99,12 +129,45 @@ data.maps.forEach(map => {
     fs.writeFileSync(file, content);
 });
 
+const buildTimestamp = new Date().toISOString();
+const mapsWithMetadata = data.maps.map((map) => {
+    const points = data.points.filter((point) => point.mapId === map.id);
+    const mostRecentNewPointAddedAt = points
+        .map((point) => point.createdAt)
+        .filter((createdAt) => typeof createdAt === 'string' && Number.isFinite(Date.parse(createdAt)))
+        .sort((a, b) => Date.parse(b) - Date.parse(a))[0] || null;
+
+    return {
+        ...map,
+        lastUpdatedAt: buildTimestamp,
+        mostRecentNewPointAddedAt,
+    };
+});
+
 const file = `./dist/maps.json`;
-const content = JSON.stringify(data.maps);
+const content = JSON.stringify(mapsWithMetadata);
 
 fs.writeFileSync(file, content);
 
 const mapsIndexed = Object.fromEntries(data.maps.map(map => [map.id, map]));
+
+const sitemapEntries = [
+    {
+        loc: `${sitemapBaseUrl}/`,
+        lastmod: buildTimestamp,
+    },
+    ...data.points.map((point) => ({
+        loc: sitemapPointUrlTemplate
+            .replaceAll('{mapId}', String(point.mapId))
+            .replaceAll('{pointId}', String(point.id)),
+        lastmod: toValidIsoZulu(point.createdAt),
+    })),
+];
+
+fs.writeFileSync(
+    `./dist/sitemap.xml`,
+    renderSitemap(sitemapEntries)
+);
 
 fs.writeFileSync(
     `./dist/points.csv`,
@@ -129,4 +192,3 @@ fs.writeFileSync(
         generateColumns(data.points)
     )
 );
-
