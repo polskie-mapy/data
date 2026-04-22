@@ -1,4 +1,5 @@
 const fs = require('fs');
+const https = require('https');
 const round = require('./lodash.round');
 
 if (!fs.existsSync('./data.json')) {
@@ -118,77 +119,163 @@ const data = require(process.cwd() + '/data.json');
 const sitemapBaseUrl = 'https://mapainternetow.pl';
 const sitemapPointUrlTemplate = `${sitemapBaseUrl}/maps/{mapId}/point/{pointId}`;
 
-fs.mkdirSync('./dist/maps', { recursive: true });
+const parseGeoLocationName = (responseBody) => {
+    try {
+        const body = JSON.parse(responseBody);
+        return typeof body?.fullName === 'string' && body.fullName.length > 0
+            ? body.fullName
+            : null;
+    } catch {
+        return null;
+    }
+};
 
-data.maps.forEach(map => {
-    const file = `./dist/maps/${map.id}/points.json`;
-    const points = data.points.filter(point => point.mapId === map.id);
-    const content = JSON.stringify(points);
+const fetchGeoLocationName = (coords) => {
+    if (!Array.isArray(coords) || coords.length < 2) {
+        return Promise.resolve(null);
+    }
 
-    fs.mkdirSync(`./dist/maps/${map.id}`, { recursive: true });
+    const [latitude, longitude] = coords;
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        return Promise.resolve(null);
+    }
+
+    const url = `https://geocoding.cvgo.re/locate?latitude=${encodeURIComponent(String(latitude))}&longitude=${encodeURIComponent(String(longitude))}`;
+
+    return new Promise((resolve) => {
+        const request = https.get(url, (response) => {
+            const chunks = [];
+
+            response.on('data', (chunk) => chunks.push(chunk));
+            response.on('end', () => {
+                if (response.statusCode !== 200) {
+                    resolve(null);
+                    return;
+                }
+
+                const body = Buffer.concat(chunks).toString('utf8');
+                resolve(parseGeoLocationName(body));
+            });
+        });
+
+        request.on('error', () => resolve(null));
+        request.setTimeout(5000, () => {
+            request.destroy();
+            resolve(null);
+        });
+    });
+};
+
+const mapWithConcurrency = async (items, concurrency, mapper) => {
+    const results = new Array(items.length);
+    let currentIndex = 0;
+
+    const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
+        while (true) {
+            const index = currentIndex;
+            currentIndex += 1;
+
+            if (index >= items.length) {
+                break;
+            }
+
+            results[index] = await mapper(items[index], index);
+        }
+    });
+
+    await Promise.all(workers);
+
+    return results;
+};
+
+const build = async () => {
+    const pointsWithGeoLocationName = await mapWithConcurrency(
+        data.points,
+        8,
+        async (point) => ({
+            ...point,
+            geoLocationName: await fetchGeoLocationName(point.coords),
+        })
+    );
+
+    fs.mkdirSync('./dist/maps', { recursive: true });
+
+    data.maps.forEach(map => {
+        const file = `./dist/maps/${map.id}/points.json`;
+        const points = pointsWithGeoLocationName.filter(point => point.mapId === map.id);
+        const content = JSON.stringify(points);
+
+        fs.mkdirSync(`./dist/maps/${map.id}`, { recursive: true });
+        fs.writeFileSync(file, content);
+    });
+
+    const buildTimestamp = new Date().toISOString();
+    const mapsWithMetadata = data.maps.map((map) => {
+        const points = pointsWithGeoLocationName.filter((point) => point.mapId === map.id);
+        const mostRecentNewPointAddedAt = points
+            .map((point) => point.createdAt)
+            .filter((createdAt) => typeof createdAt === 'string' && Number.isFinite(Date.parse(createdAt)))
+            .sort((a, b) => Date.parse(b) - Date.parse(a))[0] || null;
+
+        return {
+            ...map,
+            lastUpdatedAt: buildTimestamp,
+            mostRecentNewPointAddedAt,
+        };
+    });
+
+    const file = `./dist/maps.json`;
+    const content = JSON.stringify(mapsWithMetadata);
+
     fs.writeFileSync(file, content);
+
+    const mapsIndexed = Object.fromEntries(data.maps.map(map => [map.id, map]));
+
+    const sitemapEntries = [
+        {
+            loc: `${sitemapBaseUrl}/`,
+            lastmod: buildTimestamp,
+        },
+        ...pointsWithGeoLocationName.map((point) => ({
+            loc: sitemapPointUrlTemplate
+                .replaceAll('{mapId}', String(point.mapId))
+                .replaceAll('{pointId}', String(point.id)),
+            lastmod: toValidIsoZulu(point.createdAt),
+        })),
+    ];
+
+    fs.writeFileSync(
+        `./dist/sitemap.xml`,
+        renderSitemap(sitemapEntries)
+    );
+
+    fs.writeFileSync(
+        `./dist/points.csv`,
+        renderCsv(
+            pointsWithGeoLocationName.map(
+                point => ({
+                    mapId: point.mapId,
+                    mapName: mapsIndexed[point.mapId].name,
+                    pointId: point.id,
+                    title: point.title,
+                    excerpt: point.excerpt,
+                    assumedCoords: point.assumedCoords,
+                    tags: point.tags.map((tag) => tag.title).join(","),
+                    coords: point.coords.join(", "),
+                    geoLocationName: point.geoLocationName,
+                    gmapsUrl: coords2GmapsPin(point.coords),
+                    createdAt: point.createdAt,
+                    ...Object.fromEntries(
+                        point.links.map((link, i) => [generateColumnType(link, i), link.url])
+                    ),
+                })
+            ),
+            generateColumns(pointsWithGeoLocationName)
+        )
+    );
+};
+
+build().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
 });
-
-const buildTimestamp = new Date().toISOString();
-const mapsWithMetadata = data.maps.map((map) => {
-    const points = data.points.filter((point) => point.mapId === map.id);
-    const mostRecentNewPointAddedAt = points
-        .map((point) => point.createdAt)
-        .filter((createdAt) => typeof createdAt === 'string' && Number.isFinite(Date.parse(createdAt)))
-        .sort((a, b) => Date.parse(b) - Date.parse(a))[0] || null;
-
-    return {
-        ...map,
-        lastUpdatedAt: buildTimestamp,
-        mostRecentNewPointAddedAt,
-    };
-});
-
-const file = `./dist/maps.json`;
-const content = JSON.stringify(mapsWithMetadata);
-
-fs.writeFileSync(file, content);
-
-const mapsIndexed = Object.fromEntries(data.maps.map(map => [map.id, map]));
-
-const sitemapEntries = [
-    {
-        loc: `${sitemapBaseUrl}/`,
-        lastmod: buildTimestamp,
-    },
-    ...data.points.map((point) => ({
-        loc: sitemapPointUrlTemplate
-            .replaceAll('{mapId}', String(point.mapId))
-            .replaceAll('{pointId}', String(point.id)),
-        lastmod: toValidIsoZulu(point.createdAt),
-    })),
-];
-
-fs.writeFileSync(
-    `./dist/sitemap.xml`,
-    renderSitemap(sitemapEntries)
-);
-
-fs.writeFileSync(
-    `./dist/points.csv`,
-    renderCsv(
-        data.points.map(
-            point => ({
-                mapId: point.mapId,
-                mapName: mapsIndexed[point.mapId].name,
-                pointId: point.id,
-                title: point.title,
-                excerpt: point.excerpt,
-                assumedCoords: point.assumedCoords,
-                tags: point.tags.map((tag) => tag.title).join(","),
-                coords: point.coords.join(", "),
-                gmapsUrl: coords2GmapsPin(point.coords),
-                createdAt: point.createdAt,
-                ...Object.fromEntries(
-                    point.links.map((link, i) => [generateColumnType(link, i), link.url])
-                ),
-            })
-        ),
-        generateColumns(data.points)
-    )
-);
